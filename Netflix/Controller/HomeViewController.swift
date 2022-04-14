@@ -8,7 +8,7 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    let sectionTitles = ["Trending Movies","Popular","Trending Tv","Upcoming Movies","Top Rated"]
+    let sectionTitles = ["Trending Tv","Trending Movies","Popular","Upcoming Movies","Top Rated"]
     private let homeFeedTable:UITableView = {
         let table = UITableView(frame: .zero, style: .grouped)
         table.register(CollectionViewTableViewCell.self, forCellReuseIdentifier: CollectionViewTableViewCell.identifier)
@@ -25,6 +25,7 @@ class HomeViewController: UIViewController {
         let headerView = HeroHeaderUIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 450))
         homeFeedTable.tableHeaderView = headerView
         configureNavBar()
+        testData()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -41,6 +42,23 @@ class HomeViewController: UIViewController {
         ]
         navigationController?.navigationBar.tintColor = UIColor.label
     }
+    private func testData(){
+        APICaller.shared.getTopRated{ _ in
+            
+        }
+    }
+    private func getTrendingMoviesorTvs(){
+        APICaller.shared.getTrendingMoviesOrTvs(type: .movie) { results in
+            switch results{
+            case .success(let movies):
+                for x in movies{
+                    print(x.original_title)
+                }
+            case .failure(let error):
+                print("Error Occured \(error)")
+            }
+        }
+    }
 }
 
 extension HomeViewController:UITableViewDelegate,UITableViewDataSource{
@@ -55,10 +73,10 @@ extension HomeViewController:UITableViewDelegate,UITableViewDataSource{
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CollectionViewTableViewCell.identifier, for: indexPath) as? CollectionViewTableViewCell
-                else
-                {
-                    return UITableViewCell()
-                }
+        else
+        {
+            return UITableViewCell()
+        }
         
         return cell
     }
@@ -78,6 +96,7 @@ extension HomeViewController:UITableViewDelegate,UITableViewDataSource{
         header.textLabel?.font = .systemFont(ofSize: 18,weight:.semibold)
         header.textLabel?.frame = CGRect(x: header.bounds.origin.x+20, y: header.bounds.origin.y, width: 100, height: header.bounds.height)
         header.textLabel?.textColor = UIColor.label
+        header.textLabel?.text = header.textLabel?.text?.capitailizeFirstLetter()
     }
 }
 
