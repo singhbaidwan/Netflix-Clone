@@ -8,9 +8,9 @@
 import Foundation
 
 struct TrendingMoviesResponse:Codable{
-    let results:[Movie]
+    let results:[Title]
 }
-struct Movie:Codable{
+struct Title:Codable{
     let id:Int
     let media_type:String?
     var original_title:String?

@@ -7,14 +7,15 @@
 
 import UIKit
 
-class UpcomingTableViewCell: UITableViewCell {
-    static let identifier = "UpcomingTableViewCell"
+class TitleTableViewCell: UITableViewCell {
+    static let identifier = "TitleTableViewCell"
     
     private let titlePosterImageView:UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
 //        imageView.backgroundColor = .red
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.clipsToBounds = true
         return imageView
     }()
     private let titleLabel:UILabel = {
@@ -24,7 +25,7 @@ class UpcomingTableViewCell: UITableViewCell {
     }()
     private let playButton:UIButton = {
         let button = UIButton()
-        let image = UIImage(systemName: "play.circle",withConfiguration: UIImage.SymbolConfiguration(pointSize: 40))
+        let image = UIImage(systemName: "play.circle",withConfiguration: UIImage.SymbolConfiguration(pointSize: 30))
         button.setImage(image, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.tintColor = UIColor.label
@@ -43,8 +44,8 @@ class UpcomingTableViewCell: UITableViewCell {
     private func applyConstraints(){
         let titlePosterImageViewConstraints = [
             titlePosterImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            titlePosterImageView.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 15),
-            titlePosterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,constant: -15),
+            titlePosterImageView.topAnchor.constraint(equalTo: contentView.topAnchor,constant: 10),
+            titlePosterImageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor,constant: -10),
             titlePosterImageView.widthAnchor.constraint(equalToConstant: 100)
         ]
         let titleLabelConstraints = [
@@ -59,7 +60,7 @@ class UpcomingTableViewCell: UITableViewCell {
         NSLayoutConstraint.activate(titleLabelConstraints)
         NSLayoutConstraint.activate(playButtonConstraints)
     }
-    public func configure(with model:Movie)
+    public func configure(with model:Title)
     {
 
         if(model.poster_path != nil){

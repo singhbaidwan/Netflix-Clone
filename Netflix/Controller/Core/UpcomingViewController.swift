@@ -8,10 +8,10 @@
 import UIKit
 
 class UpcomingViewController: UIViewController {
-    private var titles:[Movie] = [Movie]()
+    private var titles:[Title] = [Title]()
     private let upcomingTable:UITableView = {
        let table = UITableView()
-        table.register(UpcomingTableViewCell.self, forCellReuseIdentifier: UpcomingTableViewCell.identifier)
+        table.register(TitleTableViewCell.self, forCellReuseIdentifier: TitleTableViewCell.identifier)
         return table
     }()
     override func viewDidLoad() {
@@ -49,7 +49,7 @@ extension UpcomingViewController:UITableViewDataSource,UITableViewDelegate{
         return titles.count
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: UpcomingTableViewCell.identifier,for: indexPath) as? UpcomingTableViewCell else
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TitleTableViewCell.identifier,for: indexPath) as? TitleTableViewCell else
         {
             let cell1 = UITableViewCell()
             cell1.textLabel?.text = "error"

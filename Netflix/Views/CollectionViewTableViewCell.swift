@@ -6,10 +6,13 @@
 //
 
 import UIKit
-
+protocol CollectionViewTableViewCellDelegate:AnyObject{
+    func collectionViewTableViewCellDidTapCell(_ cell:CollectionViewTableViewCell,viewModel:TitlePreviewViewModel)
+}
 class CollectionViewTableViewCell: UITableViewCell {
     static let identifier = "CollectionViewTableViewCell"
-    private var titles:[Movie] = [Movie]()
+    weak var delegate:CollectionViewTableViewCellDelegate?
+    private var titles:[Title] = [Title]()
     let collectionView:UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.itemSize = CGSize(width: 140, height: 200)
@@ -34,7 +37,7 @@ class CollectionViewTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    public func configure(with titles:[Movie])
+    public func configure(with titles:[Title])
     {
         self.titles = titles
         DispatchQueue.main.async { [weak self] in
@@ -56,5 +59,22 @@ extension CollectionViewTableViewCell:UICollectionViewDelegate,UICollectionViewD
         }
         cell.configure(with: path)
         return cell
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let title = titles[indexPath.row]
+        guard let titleName = title.original_name ?? title.original_title else {return}
+        APICaller.shared.getMovie(with: titleName+"trailer") { [weak self]result in
+            switch result{
+            case .success(let videoDescription):
+                let name =  self?.titles[indexPath.row].original_name ?? self?.titles[indexPath.row].original_title ?? ""
+                guard let strongself = self else {return}
+                let overview = self?.titles[indexPath.row].overview ?? ""
+                let previewModel = TitlePreviewViewModel(title:name, overview: overview, youtubeView: videoDescription)
+                strongself.delegate?.collectionViewTableViewCellDidTapCell(strongself, viewModel: previewModel)
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
