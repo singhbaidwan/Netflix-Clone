@@ -10,7 +10,7 @@ import UIKit
 class UpcomingViewController: UIViewController {
     private var titles:[Title] = [Title]()
     private let upcomingTable:UITableView = {
-       let table = UITableView()
+        let table = UITableView()
         table.register(TitleTableViewCell.self, forCellReuseIdentifier: TitleTableViewCell.identifier)
         return table
     }()
@@ -60,5 +60,21 @@ extension UpcomingViewController:UITableViewDataSource,UITableViewDelegate{
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 150
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        let title = titles[indexPath.row]
+        guard let titleName = title.original_name ?? title.original_title else {return}
+        APICaller.shared.getMovie(with: titleName) { [weak self] result in
+            switch result{
+            case .success(let video):
+                DispatchQueue.main.async {
+                    let vc = TitlePreviewViewController()
+                    vc.configure(with: TitlePreviewViewModel(title: titleName, overview: title.overview ?? "", youtubeView: video))
+                    self?.navigationController?.pushViewController(vc, animated: true)}
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
